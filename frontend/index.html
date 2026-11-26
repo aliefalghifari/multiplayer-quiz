@@ -2,12 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <title>Multiplayer Quiz</title>
+    <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <main id="lobby" class="app-container">
+      <div id="slot-hero"></div>
+      <div id="slot-players"></div>
+      <div id="slot-status"></div>
+      <div id="slot-log"></div>
+    </main>
+    <main id="quiz-screen" class="quiz-screen" hidden>
+      <div id="quiz-root"></div>
+    </main>
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>

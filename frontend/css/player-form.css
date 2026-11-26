@@ -1,0 +1,79 @@
+.input-label {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.player-panel input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 13px;
+  color: var(--text);
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  outline: none;
+  font-size: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.player-panel input::placeholder {
+  color: #cbd5e1;
+}
+
+.player-panel input:focus {
+  background: var(--page-surface);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #38bdf826;
+}
+
+.player-panel input:disabled {
+  color: var(--text-muted);
+  background: var(--panel-surface);
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 17px;
+}
+
+.connect-button,
+.disconnect-button,
+.clear-log-button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.connect-button {
+  color: #123247;
+  background: var(--primary);
+  box-shadow: none;
+}
+
+.connect-button:hover:not(:disabled) {
+  color: #0c293a;
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.disconnect-button {
+  color: var(--text);
+  background: var(--panel-surface);
+  border-color: var(--border);
+}
+
+.disconnect-button:hover:not(:disabled) {
+  color: #ffd7dc;
+  background: #4e2d38;
+  border-color: #ffc3ce;
+}

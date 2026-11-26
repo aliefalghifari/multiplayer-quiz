@@ -1,0 +1,63 @@
+/* Quiz hero illustration */
+
+.quiz-hero {
+  position: relative;
+  display: flex;
+  min-height: 290px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  padding: 34px 42px;
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+}
+
+.quiz-hero-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  max-width: 440px;
+}
+
+.quiz-hero-content .eyebrow {
+  color: #7dd3fc;
+}
+
+.quiz-hero-content h2 {
+  max-width: 400px;
+  margin: 0;
+  color: var(--text);
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(25px, 3vw, 35px);
+  font-weight: 800;
+  letter-spacing: -1.3px;
+  line-height: 1.2;
+}
+
+.quiz-hero-content p {
+  max-width: 380px;
+  margin: 13px 0 19px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.quiz-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.quiz-hero-tags span {
+  padding: 8px 11px;
+  color: var(--primary);
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Illustration stage */

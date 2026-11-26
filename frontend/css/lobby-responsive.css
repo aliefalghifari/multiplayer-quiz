@@ -1,0 +1,30 @@
+@media (max-width: 700px) {
+  .app-container {
+    width: min(100% - 30px, 520px);
+    padding: 28px 0;
+  }
+
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .player-panel {
+    padding: 19px;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-container {
+    width: calc(100% - 24px);
+    padding-top: 24px;
+  }
+
+  .activity-row {
+    gap: 9px;
+    padding: 13px;
+  }
+
+  .activity-tag {
+    font-size: 8px;
+  }
+}

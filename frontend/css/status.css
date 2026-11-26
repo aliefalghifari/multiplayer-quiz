@@ -1,0 +1,70 @@
+/* Server status */
+
+.status-container {
+  padding: 16px;
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.status-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 15px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.status-message-icon {
+  display: grid;
+  flex-shrink: 0;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  background: var(--page-surface);
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.status-message-content {
+  min-width: 0;
+}
+
+.status-message-content strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.status-message-content p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.status-message.status-info {
+  color: #d4efff;
+  background: #25415a;
+  border-color: #c9e8ff;
+}
+
+.status-message.status-waiting {
+  color: #ffe2a8;
+  background: #4b3b22;
+  border-color: #ffe2aa;
+}
+
+.status-message.status-success {
+  color: #c6f5df;
+  background: #1f463a;
+  border-color: #b7f0d7;
+}
+
+.status-message.status-error {
+  color: #ffd7dc;
+  background: #4e2d38;
+  border-color: #ffc3ce;
+}

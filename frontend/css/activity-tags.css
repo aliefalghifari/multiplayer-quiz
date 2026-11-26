@@ -1,0 +1,72 @@
+.activity-indicator {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  background: #a0a4b6;
+  border-radius: 50%;
+}
+
+.activity-indicator.status-success {
+  background: #66d6a8;
+}
+
+.activity-indicator.status-waiting {
+  background: #f2c56f;
+}
+
+.activity-indicator.status-error {
+  background: #ee8292;
+}
+
+.activity-indicator.status-info {
+  background: #7dc7f2;
+}
+
+.activity-details {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+
+.activity-details strong {
+  font-size: 11px;
+}
+
+.activity-details span {
+  overflow-wrap: anywhere;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.activity-tag {
+  flex-shrink: 0;
+  padding: 6px 8px;
+  color: var(--text);
+  background: #46576c;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.activity-tag.status-success {
+  color: #c6f5df;
+  background: #204638;
+}
+
+.activity-tag.status-waiting {
+  color: #ffe2a8;
+  background: #4b3b22;
+}
+
+.activity-tag.status-error {
+  color: #ffd7dc;
+  background: #4e2d38;
+}
+
+.activity-tag.status-info {
+  color: #d4efff;
+  background: #25415a;
+}

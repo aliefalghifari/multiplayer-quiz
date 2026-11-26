@@ -1,0 +1,29 @@
+<section class="section-block">
+  <div class="players-grid">
+    <article class="player-panel">
+      <div class="player-panel-header">
+        <h2>Connection</h2>
+        <span class="connection-indicator is-disconnected" data-indicator="1">
+          <span class="indicator-dot"></span>
+          <span data-indicator-label>Offline</span>
+        </span>
+      </div>
+      <form data-player-form>
+        <label class="input-label" for="player-name">Your name</label>
+        <input
+          id="player-name"
+          data-name="1"
+          name="player_name"
+          type="text"
+          placeholder="Enter your name"
+          autocomplete="nickname"
+          required
+        />
+        <div class="button-group">
+          <button class="connect-button" type="submit" data-connect="1">Connect</button>
+          <button class="disconnect-button" type="button" data-disconnect="1" disabled>Disconnect</button>
+        </div>
+      </form>
+    </article>
+  </div>
+</section>

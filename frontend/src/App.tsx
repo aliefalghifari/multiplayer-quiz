@@ -12,6 +12,23 @@ interface ServerMessage {
   message: string;
 }
 
+type QuizStage = "lobby" | "starting" | "question" | "result";
+
+interface QuizState {
+  stage: QuizStage;
+  roomId: string | null;
+  opponent: string | null;
+  questionIndex: number;
+  totalQuestions: number;
+  question: string;
+  options: string[];
+  selectedAnswer: number | null;
+  answerCorrect: boolean | null;
+  winnerText: string;
+  scores: Record<string, number>;
+  players: Record<string, string>;
+}
+
 interface LogEntry {
   id: number;
   player: string;
@@ -26,6 +43,7 @@ interface PlayerPanelProps {
   onConnect: () => void;
   onDisconnect: () => void;
   connected: boolean;
+  canConnect: boolean;
 }
 
 function PlayerPanel({
@@ -35,6 +53,7 @@ function PlayerPanel({
   onConnect,
   onDisconnect,
   connected,
+  canConnect,
 }: PlayerPanelProps) {
   return (
     <article className="player-panel">
@@ -72,7 +91,7 @@ function PlayerPanel({
           className="connect-button"
           type="button"
           onClick={onConnect}
-          disabled={connected || !playerName.trim()}
+          disabled={connected || !canConnect || !playerName.trim()}
         >
           Connect
         </button>
@@ -90,15 +109,65 @@ function PlayerPanel({
   );
 }
 
+function createInitialQuizState(): QuizState {
+  return {
+    stage: "lobby",
+    roomId: null,
+    opponent: null,
+    questionIndex: 0,
+    totalQuestions: 0,
+    question: "",
+    options: [],
+    selectedAnswer: null,
+    answerCorrect: null,
+    winnerText: "",
+    scores: {},
+    players: {},
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function getNumberRecord(value: unknown): Record<string, number> {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      (entry): entry is [string, number] =>
+        typeof entry[1] === "number" && Number.isFinite(entry[1]),
+    ),
+  );
+}
+
+function getStringRecord(value: unknown): Record<string, string> {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      (entry): entry is [string, string] => typeof entry[1] === "string",
+    ),
+  );
+}
+
 function App() {
   const player1 = useRef<WebSocket | null>(null);
   const player2 = useRef<WebSocket | null>(null);
+  const activeSocket = useRef<WebSocket | null>(null);
 
   const [player1Name, setPlayer1Name] = useState("Player 1");
   const [player2Name, setPlayer2Name] = useState("Player 2");
 
   const [player1Connected, setPlayer1Connected] = useState(false);
   const [player2Connected, setPlayer2Connected] = useState(false);
+  const [activePlayerId, setActivePlayerId] = useState<1 | 2 | null>(null);
+  const [canFindAgain, setCanFindAgain] = useState(false);
+  const [quiz, setQuiz] = useState<QuizState>(createInitialQuizState);
 
   const [serverMessage, setServerMessage] = useState<ServerMessage>({
     type: "info",
@@ -125,6 +194,7 @@ function App() {
   }
 
   function connectPlayer(
+    playerId: 1 | 2,
     playerName: string,
     socketRef: MutableRefObject<WebSocket | null>,
     setConnected: (connected: boolean) => void,
@@ -140,6 +210,10 @@ function App() {
       return;
     }
 
+    if (activePlayerId !== null && activePlayerId !== playerId) {
+      return;
+    }
+
     const existingSocket = socketRef.current;
 
     if (
@@ -150,9 +224,14 @@ function App() {
       return;
     }
 
-    // WebSocket endpoint. HTTP endpoint tetap tidak diubah.
-    const socket = new WebSocket("ws://127.0.0.1:8000/ws");
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const hostname = window.location.hostname || "127.0.0.1";
+    const socket = new WebSocket(
+      `${protocol}//${hostname}:8000/ws?player_name=${encodeURIComponent(name)}`,
+    );
     socketRef.current = socket;
+    activeSocket.current = socket;
+    setActivePlayerId(playerId);
 
     setServerMessage({
       type: "info",
@@ -164,6 +243,7 @@ function App() {
 
     socket.onopen = () => {
       setConnected(true);
+      setCanFindAgain(true);
 
       setServerMessage({
         type: "success",
@@ -175,51 +255,147 @@ function App() {
     };
 
     socket.onmessage = (event: MessageEvent<string>) => {
-      let message: ServerMessage;
+      let parsed: unknown;
 
       try {
-        const parsed: unknown = JSON.parse(event.data);
-
-        if (
-          typeof parsed === "object" &&
-          parsed !== null &&
-          "message" in parsed
-        ) {
-          const data = parsed as Record<string, unknown>;
-
-          const status: MessageStatus =
-            data.status === "waiting" ||
-            data.status === "success" ||
-            data.status === "error" ||
-            data.status === "info"
-              ? data.status
-              : "info";
-
-          message = {
-            type: typeof data.type === "string" ? data.type : "message",
-            status,
-            message:
-              typeof data.message === "string"
-                ? data.message
-                : event.data,
-          };
-        } else {
-          message = {
-            type: "message",
-            status: "info",
-            message: event.data,
-          };
-        }
+        parsed = JSON.parse(event.data);
       } catch {
-        message = {
-          type: "message",
-          status: "info",
-          message: event.data,
+        const message: ServerMessage = {
+          type: "error",
+          status: "error",
+          message: "Invalid message received from the server.",
         };
+        setServerMessage(message);
+        addLog(name, message.message, message.status);
+        return;
       }
+
+      if (!isRecord(parsed)) {
+        return;
+      }
+
+      const eventType =
+        typeof parsed.type === "string"
+          ? parsed.type
+          : typeof parsed.event === "string"
+            ? parsed.event
+            : "message";
+      const status: MessageStatus =
+        parsed.status === "waiting" ||
+        parsed.status === "success" ||
+        parsed.status === "error" ||
+        parsed.status === "info"
+          ? parsed.status
+          : "info";
+      const message: ServerMessage = {
+        type: eventType,
+        status,
+        message:
+          typeof parsed.message === "string" ? parsed.message : event.data,
+      };
 
       setServerMessage(message);
       addLog(name, message.message, message.status);
+
+      if (eventType === "matched" || eventType === "match_found") {
+        setQuiz((current) => ({
+          ...current,
+          stage: "starting",
+          roomId:
+            typeof parsed.room_id === "string"
+              ? parsed.room_id
+              : current.roomId,
+          opponent:
+            typeof parsed.opponent === "string"
+              ? parsed.opponent
+              : current.opponent,
+        }));
+      } else if (eventType === "new_question") {
+        const options = Array.isArray(parsed.options)
+          ? parsed.options.filter(
+              (option): option is string => typeof option === "string",
+            )
+          : [];
+        const question = parsed.question;
+        const questionIndex = parsed.question_index;
+        const totalQuestions = parsed.total_questions;
+
+        if (
+          typeof question !== "string" ||
+          options.length === 0 ||
+          typeof questionIndex !== "number" ||
+          !Number.isInteger(questionIndex) ||
+          questionIndex < 0
+        ) {
+          setServerMessage({
+            type: "error",
+            status: "error",
+            message: "The server sent an invalid quiz question.",
+          });
+          return;
+        }
+
+        setQuiz((current) => ({
+          ...current,
+          stage: "question",
+          roomId:
+            typeof parsed.room_id === "string"
+              ? parsed.room_id
+              : current.roomId,
+          questionIndex,
+          totalQuestions:
+            typeof totalQuestions === "number" &&
+            Number.isInteger(totalQuestions) &&
+            totalQuestions > 0
+              ? totalQuestions
+              : current.totalQuestions,
+          question,
+          options,
+          selectedAnswer: null,
+          answerCorrect: null,
+        }));
+      } else if (
+        eventType === "answer_result" &&
+        typeof parsed.is_correct === "boolean"
+      ) {
+        const answerCorrect = parsed.is_correct;
+        setQuiz((current) => ({
+          ...current,
+          answerCorrect,
+        }));
+      } else if (eventType === "score_update") {
+        setQuiz((current) => ({
+          ...current,
+          scores: getNumberRecord(parsed.scores),
+          players: getStringRecord(parsed.players),
+        }));
+      } else if (eventType === "game_over") {
+        setQuiz((current) => ({
+          ...current,
+          stage: "result",
+          winnerText:
+            typeof parsed.winner_text === "string"
+              ? parsed.winner_text
+              : message.message,
+          scores: getNumberRecord(parsed.scores),
+          players: getStringRecord(parsed.players),
+        }));
+      } else if (
+        eventType === "player_disconnected" ||
+        eventType === "opponent_left"
+      ) {
+        setQuiz((current) => ({
+          ...current,
+          stage: "result",
+          winnerText: message.message,
+        }));
+      } else if (eventType === "error") {
+        setQuiz((current) =>
+          current.stage === "question"
+            ? { ...current, selectedAnswer: null }
+            : current,
+        );
+      }
     };
 
     socket.onerror = () => {
@@ -247,6 +423,21 @@ function App() {
         });
       }
 
+      if (activeSocket.current === socket) {
+        activeSocket.current = null;
+        setActivePlayerId(null);
+        setCanFindAgain(false);
+        setQuiz((current) =>
+          current.stage === "question" || current.stage === "starting"
+            ? {
+                ...current,
+                stage: "result",
+                winnerText: "Koneksi ke server terputus.",
+              }
+            : current,
+        );
+      }
+
       addLog(
         name,
         `Connection closed (code ${event.code}).`,
@@ -256,6 +447,7 @@ function App() {
   }
 
   function disconnectPlayer(
+    playerId: 1 | 2,
     playerName: string,
     socketRef: MutableRefObject<WebSocket | null>,
   ) {
@@ -273,7 +465,156 @@ function App() {
     }
 
     socketRef.current = null;
+    if (activeSocket.current === socket) {
+      activeSocket.current = null;
+      setActivePlayerId(null);
+    }
+    setCanFindAgain(false);
+    if (playerId === 1) {
+      setPlayer1Connected(false);
+    } else {
+      setPlayer2Connected(false);
+    }
+    setQuiz(createInitialQuizState());
     addLog(playerName, "Disconnect requested.", "info");
+  }
+
+  function submitAnswer(answerIndex: number) {
+    const socket = activeSocket.current;
+
+    if (
+      !socket ||
+      socket.readyState !== WebSocket.OPEN ||
+      !quiz.roomId ||
+      quiz.selectedAnswer !== null
+    ) {
+      return;
+    }
+
+    try {
+      socket.send(
+        JSON.stringify({
+          action: "submit_answer",
+          room_id: quiz.roomId,
+          question_index: quiz.questionIndex,
+          answer_index: answerIndex,
+        }),
+      );
+    } catch {
+      setServerMessage({
+        type: "error",
+        status: "error",
+        message: "Jawaban gagal dikirim karena koneksi terputus.",
+      });
+      return;
+    }
+
+    setQuiz((current) => ({
+      ...current,
+      selectedAnswer: answerIndex,
+    }));
+  }
+
+  function findMatchAgain() {
+    const socket = activeSocket.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      setServerMessage({
+        type: "error",
+        status: "error",
+        message: "Koneksi ke server terputus. Sambungkan kembali dari halaman utama.",
+      });
+      return;
+    }
+
+    try {
+      socket.send(JSON.stringify({ action: "find_match" }));
+    } catch {
+      setServerMessage({
+        type: "error",
+        status: "error",
+        message: "Gagal mencari lawan karena koneksi terputus.",
+      });
+      return;
+    }
+
+    setQuiz({
+      ...createInitialQuizState(),
+      stage: "starting",
+    });
+  }
+
+  if (quiz.stage !== "lobby") {
+    return (
+      <main className="quiz-screen">
+        {quiz.stage === "starting" && (
+          <section className="quiz-panel quiz-starting" aria-live="polite">
+            <span className="quiz-kicker">MULTIPLAYER QUIZ</span>
+            <h1>{quiz.opponent ? `Bertemu ${quiz.opponent}` : "Room dibuat"}</h1>
+            <p>Menyiapkan soal...</p>
+            <span className="quiz-loading-dot" aria-hidden="true" />
+          </section>
+        )}
+
+        {quiz.stage === "question" && (
+          <section className="quiz-panel" aria-live="polite">
+            <p className="quiz-progress">
+              SOAL {quiz.questionIndex + 1} / {quiz.totalQuestions}
+            </p>
+            <h1 className="quiz-question">{quiz.question}</h1>
+            <div className="quiz-options" role="group" aria-label="Pilihan jawaban">
+              {quiz.options.map((option, index) => {
+                const selected = quiz.selectedAnswer === index;
+                const resultClass =
+                  selected && quiz.answerCorrect === true
+                    ? " is-correct"
+                    : selected && quiz.answerCorrect === false
+                      ? " is-wrong"
+                      : "";
+
+                return (
+                  <button
+                    className={`quiz-option${resultClass}`}
+                    type="button"
+                    key={`${quiz.questionIndex}-${index}`}
+                    onClick={() => submitAnswer(index)}
+                    disabled={quiz.selectedAnswer !== null}
+                    aria-pressed={selected}
+                  >
+                    <span className="quiz-option-letter">
+                      {String.fromCharCode(65 + index)}
+                    </span>
+                    <span>{option}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {quiz.stage === "result" && (
+          <section className="quiz-panel quiz-result" aria-live="polite">
+            <span className="quiz-kicker">HASIL PERMAINAN</span>
+            <h1>{quiz.winnerText || "Game selesai"}</h1>
+            <div className="quiz-final-scores">
+              {Object.entries(quiz.scores).map(([playerId, score]) => (
+                <p key={playerId}>
+                  <span>{quiz.players[playerId] || "Pemain"}</span>
+                  <strong>{score} poin</strong>
+                </p>
+              ))}
+            </div>
+            <button
+              className="quiz-replay-button"
+              type="button"
+              onClick={findMatchAgain}
+              disabled={!canFindAgain}
+            >
+              Cari lawan lagi
+            </button>
+          </section>
+        )}
+      </main>
+    );
   }
 
   return (
@@ -292,7 +633,7 @@ function App() {
 <section className="quiz-hero">
   <div className="quiz-hero-content">
     <span className="eyebrow">READY TO PLAY?</span>
-    <h2>Apantatt?</h2>
+    <h2></h2>
     <p>
       Connect with another player and get ready to challenge
       each other in a multiplayer quiz.
@@ -360,7 +701,7 @@ function App() {
         <div className="section-heading">
           <div>
             <h2>Players</h2>
-            <p>Manage each player's connection.</p>
+            <p>Connect one player from this device to find an opponent.</p>
           </div>
 
           <span className="section-count">2 PLAYERS</span>
@@ -373,15 +714,17 @@ function App() {
             onNameChange={setPlayer1Name}
             onConnect={() =>
               connectPlayer(
+                1,
                 player1Name,
                 player1,
                 setPlayer1Connected,
               )
             }
             onDisconnect={() =>
-              disconnectPlayer("Player 1", player1)
+              disconnectPlayer(1, player1Name, player1)
             }
             connected={player1Connected}
+            canConnect={activePlayerId === null || activePlayerId === 1}
           />
 
           <PlayerPanel
@@ -390,15 +733,17 @@ function App() {
             onNameChange={setPlayer2Name}
             onConnect={() =>
               connectPlayer(
+                2,
                 player2Name,
                 player2,
                 setPlayer2Connected,
               )
             }
             onDisconnect={() =>
-              disconnectPlayer("Player 2", player2)
+              disconnectPlayer(2, player2Name, player2)
             }
             connected={player2Connected}
+            canConnect={activePlayerId === null || activePlayerId === 2}
           />
         </div>
       </section>
