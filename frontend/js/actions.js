@@ -19,6 +19,10 @@ export function confirmAnswer() {
   const quiz = ui.quiz;
   if (!socket || socket.readyState !== WebSocket.OPEN) return;
   if (!quiz.roomId || quiz.selectedAnswer === null || quiz.answerSubmitted) return;
+
+  const isCorrect = quiz.selectedAnswer === quiz.correctAnswer;
+  quiz.playerResults[quiz.questionIndex] = isCorrect;
+
   try {
     socket.send(
       JSON.stringify({
@@ -38,6 +42,7 @@ export function confirmAnswer() {
   );
   if (entry) {
     entry.selectedAnswer = quiz.selectedAnswer;
+    entry.isCorrect = isCorrect;
   }
   if (quiz.questionIndex >= quiz.totalQuestions - 1) {
     quiz.waitingForOpponent = true;
