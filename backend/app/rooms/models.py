@@ -21,3 +21,8 @@ class GameRoom:
     current_question: int = -1
     answers: dict[str, int] = field(default_factory=dict)
     advancing: bool = False
+    player_results: dict[str, dict[int, bool]] = field(default_factory=dict)
+    player_current_question: dict[str, int] = field(default_factory=dict)
+    player_finished: dict[str, bool] = field(default_factory=dict)
+    player_start_times: dict[str, float] = field(default_factory=dict)
+    player_durations: dict[str, float] = field(default_factory=dict)

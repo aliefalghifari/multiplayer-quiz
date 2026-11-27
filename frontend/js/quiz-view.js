@@ -2,7 +2,8 @@ import { ui } from "./state.js";
 import { startingMarkup } from "./starting-view.js";
 import { questionMarkup } from "./question-view.js";
 import { resultMarkup } from "./result-view.js";
-import { formatElapsed } from "./game-hud.js";
+import { formatCountdown } from "./game-hud.js";
+import { render } from "./render.js";
 
 let stamp = "";
 let timerInterval = null;
@@ -23,8 +24,13 @@ function syncElapsedTimer() {
 
 function updateElapsed() {
   const timer = document.getElementById("game-elapsed");
-  if (timer) {
-    timer.textContent = formatElapsed(ui.quiz.startedAt, ui.quiz.endedAt ?? Date.now());
+  if (timer && ui.quiz.startedAt !== null && ui.quiz.endedAt === null) {
+    const text = formatCountdown(ui.quiz.startedAt);
+    timer.textContent = text;
+    if (text === "00:00" && ui.quiz.stage === "question" && !ui.quiz.waitingForOpponent && !ui.quiz.completed) {
+      ui.quiz.waitingForOpponent = true;
+      render();
+    }
   }
 }
 

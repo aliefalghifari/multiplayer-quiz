@@ -1,7 +1,7 @@
 import asyncio
 
 from app.rooms.answer_check import judge_answer, parse_answer
-from app.rooms.game_advance import next_question_delay
+from app.rooms.game_question import send_question_to_player
 from app.rooms.send import broadcast_room, send_to_player
 
 
@@ -18,6 +18,10 @@ async def submit_answer(manager, player_id, data):
         return
     room_id, question_index, answer_index = parsed
     async with manager._lock:
+        room = manager.rooms.get(room_id)
+        if room is None:
+            await send_to_player(manager, player_id, "error", "Room tidak ditemukan.", status="error")
+            return
         outcome = judge_answer(
             manager, player_id, room_id, question_index, answer_index
         )
@@ -43,6 +47,39 @@ async def submit_answer(manager, player_id, data):
         "Skor diperbarui.",
         scores=outcome["scores"],
         players=outcome["players"],
+        player_results=outcome["player_results"],
     )
-    if outcome["should_advance"]:
-        asyncio.create_task(next_question_delay(manager, room_id))
+
+    if not outcome["finished"]:
+        await send_question_to_player(manager, player_id, room, room.player_current_question[player_id])
+    else:
+        if all(room.player_finished.values()):
+            scores = dict(room.scores)
+            players = outcome["players"]
+            durations = outcome["player_durations"]
+            first_id, second_id = room.player_ids
+            if scores[first_id] > scores[second_id]:
+                winner_text = f"{players[first_id]} menang!"
+            elif scores[second_id] > scores[first_id]:
+                winner_text = f"{players[second_id]} menang!"
+            else:
+                d1 = durations.get(first_id, 999999)
+                d2 = durations.get(second_id, 999999)
+                if d1 <= d2:
+                    winner_text = f"{players[first_id]} menang (waktu lebih cepat)!"
+                else:
+                    winner_text = f"{players[second_id]} menang (waktu lebih cepat)!"
+            await broadcast_room(
+                manager,
+                room_id,
+                "game_over",
+                winner_text,
+                status="success",
+                winner_text=winner_text,
+                scores=scores,
+                players=players,
+                durations=durations,
+            )
+            manager.rooms.pop(room_id, None)
+            for pid in room.player_ids:
+                manager.players[pid].room_id = None

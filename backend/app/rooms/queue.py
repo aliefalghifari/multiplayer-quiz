@@ -1,5 +1,6 @@
 import asyncio
 import random
+import time
 from uuid import uuid4
 
 from app.questions import QUIZ_QUESTIONS
@@ -44,10 +45,16 @@ async def queue_player(manager, player_id):
 
 async def _open_room(manager, player_1, player_2):
     room_id = f"room-{uuid4()}"
+    now = time.time()
     room = GameRoom(
         player_ids=(player_1, player_2),
         questions=random.sample(QUIZ_QUESTIONS, min(5, len(QUIZ_QUESTIONS))),
         scores={player_1: 0, player_2: 0},
+        player_results={player_1: {}, player_2: {}},
+        player_current_question={player_1: 0, player_2: 0},
+        player_finished={player_1: False, player_2: False},
+        player_start_times={player_1: now, player_2: now},
+        player_durations={},
     )
     manager.rooms[room_id] = room
     manager.players[player_1].room_id = room_id

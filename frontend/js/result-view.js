@@ -66,6 +66,17 @@ export function resultMarkup(quiz, canFindAgain) {
   const scoreValue = (score) =>
     score === null ? "Belum tersedia" : `${escapeHtml(score)} poin`;
   const duration = formatElapsed(quiz.startedAt, quiz.endedAt ?? Date.now());
+  const durations = quiz.durations || {};
+  const ownDurSecs = ownEntry ? durations[ownEntry[0]] : null;
+  const oppDurSecs = opponentEntry ? durations[opponentEntry[0]] : null;
+  const formatSecs = (secs) => {
+    if (typeof secs !== "number") return duration;
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  };
+  const ownDurationText = formatSecs(ownDurSecs);
+  const oppDurationText = formatSecs(oppDurSecs);
 
   return `<section class="quiz-panel quiz-result" aria-live="polite">
     <span class="quiz-kicker">MULTIPLAYER QUIZ</span>
@@ -82,9 +93,9 @@ export function resultMarkup(quiz, canFindAgain) {
         <strong class="quiz-result-value${opponentOutcomeClass}" role="cell">${scoreValue(opponentScore)}</strong>
       </div>
       <div class="quiz-result-row" role="row">
-        <strong class="quiz-result-value${ownOutcomeClass}" role="cell">${duration}</strong>
-        <span class="quiz-result-label" role="rowheader">Durasi</span>
-        <strong class="quiz-result-value${opponentOutcomeClass}" role="cell">${duration}</strong>
+        <strong class="quiz-result-value${ownOutcomeClass}" role="cell">${escapeHtml(ownDurationText)}</strong>
+        <span class="quiz-result-label" role="rowheader">Durasi Selesai</span>
+        <strong class="quiz-result-value${opponentOutcomeClass}" role="cell">${escapeHtml(oppDurationText)}</strong>
       </div>
       <div class="quiz-result-row" role="row">
         <strong class="quiz-result-value quiz-result-status${ownOutcomeClass}" role="cell">${ownStatus}</strong>

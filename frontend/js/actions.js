@@ -8,29 +8,39 @@ function fail(message) {
 }
 
 export function submitAnswer(answerIndex) {
+  const quiz = ui.quiz;
+  if (quiz.answerSubmitted) return;
+  quiz.selectedAnswer = answerIndex;
+  render();
+}
+
+export function confirmAnswer() {
   const socket = refs.activeSocket;
   const quiz = ui.quiz;
   if (!socket || socket.readyState !== WebSocket.OPEN) return;
-  if (!quiz.roomId || quiz.selectedAnswer !== null) return;
+  if (!quiz.roomId || quiz.selectedAnswer === null || quiz.answerSubmitted) return;
   try {
     socket.send(
       JSON.stringify({
         action: "submit_answer",
         room_id: quiz.roomId,
         question_index: quiz.questionIndex,
-        answer_index: answerIndex,
+        answer_index: quiz.selectedAnswer,
       }),
     );
   } catch {
     fail("Jawaban gagal dikirim karena koneksi terputus.");
     return;
   }
-  quiz.selectedAnswer = answerIndex;
+  quiz.answerSubmitted = true;
   const entry = quiz.questionLog.find(
     (item) => item.questionIndex === quiz.questionIndex,
   );
   if (entry) {
-    entry.selectedAnswer = answerIndex;
+    entry.selectedAnswer = quiz.selectedAnswer;
+  }
+  if (quiz.questionIndex >= quiz.totalQuestions - 1) {
+    quiz.waitingForOpponent = true;
   }
   render();
 }

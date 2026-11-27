@@ -1,4 +1,15 @@
 
+.quiz-option.is-selected {
+  background: var(--panel-surface);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.quiz-option.is-selected .quiz-option-letter {
+  color: #0f172a;
+  background: var(--primary);
+}
+
 .quiz-option-letter {
   display: grid;
   width: 34px;

@@ -1,7 +1,7 @@
 import { ui } from "./state.js";
 import { connectPlayer } from "./connect.js";
 import { disconnectPlayer, returnToLobby } from "./disconnect.js";
-import { submitAnswer, findMatchAgain } from "./actions.js";
+import { submitAnswer, confirmAnswer, findMatchAgain } from "./actions.js";
 import { navigateTo } from "./nav-view.js";
 import { clearHistory, toggleHistoryReview } from "./history-view.js";
 import { syncLobby } from "./lobby-view.js";
@@ -43,6 +43,10 @@ export function bindPage() {
     const option = target.closest("[data-option]");
     if (option) {
       submitAnswer(Number(option.dataset.option));
+      return;
+    }
+    if (target.closest("[data-next-question]")) {
+      confirmAnswer();
       return;
     }
     if (target.closest("[data-replay]")) findMatchAgain();

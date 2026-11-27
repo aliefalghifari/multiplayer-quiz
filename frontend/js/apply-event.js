@@ -35,6 +35,10 @@ export function applyEvent(eventType, parsed, message) {
     quiz.completed = false;
     quiz.historySaved = false;
     quiz.questionLog = [];
+    quiz.playerResults = {};
+    quiz.opponentResults = {};
+    quiz.answerSubmitted = false;
+    quiz.waitingForOpponent = false;
     quiz.startedAt = Date.now();
     quiz.endedAt = null;
     if (typeof parsed.player_id === "string") quiz.playerId = parsed.player_id;
@@ -54,6 +58,10 @@ export function applyEvent(eventType, parsed, message) {
     }
     if (quiz.startedAt === null) quiz.startedAt = Date.now();
     Object.assign(quiz, next);
+    quiz.selectedAnswer = null;
+    quiz.answerCorrect = null;
+    quiz.answerSubmitted = false;
+    quiz.waitingForOpponent = false;
     recordQuestionEntry(quiz, next);
     return;
   }
@@ -62,6 +70,7 @@ export function applyEvent(eventType, parsed, message) {
     if (typeof parsed.correct_answer === "number") {
       quiz.correctAnswer = parsed.correct_answer;
     }
+    quiz.playerResults[quiz.questionIndex] = parsed.is_correct;
     const item = quiz.questionLog.find(
       (entry) => entry.questionIndex === quiz.questionIndex,
     );
@@ -76,16 +85,31 @@ export function applyEvent(eventType, parsed, message) {
   if (eventType === "score_update") {
     quiz.scores = numberRecord(parsed.scores);
     quiz.players = stringRecord(parsed.players);
+    if (parsed.player_results && typeof parsed.player_results === "object") {
+      for (const [pid, resMap] of Object.entries(parsed.player_results)) {
+        const formattedRes = {};
+        for (const [k, v] of Object.entries(resMap)) {
+          formattedRes[Number(k)] = Boolean(v);
+        }
+        if (pid === quiz.playerId) {
+          quiz.playerResults = formattedRes;
+        } else {
+          quiz.opponentResults = formattedRes;
+        }
+      }
+    }
     return;
   }
   if (eventType === "game_over") {
     quiz.stage = "result";
     quiz.completed = true;
     quiz.endedAt = Date.now();
+    quiz.waitingForOpponent = false;
     quiz.winnerText =
       typeof parsed.winner_text === "string" ? parsed.winner_text : message.message;
     quiz.scores = numberRecord(parsed.scores);
     quiz.players = stringRecord(parsed.players);
+    quiz.durations = parsed.durations || {};
     recordMatchHistory(quiz);
     return;
   }
