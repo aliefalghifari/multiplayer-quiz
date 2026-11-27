@@ -60,4 +60,146 @@
   font-weight: 700;
 }
 
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.hero-play-button {
+  min-height: 44px;
+  padding: 11px 20px;
+  color: #123247;
+  background: var(--primary);
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.hero-play-button:hover:not(:disabled) {
+  color: #0c293a;
+  background: var(--primary-dark);
+}
+
+.hero-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.info-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 24px;
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  border-color: #9bb0c6;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28);
+}
+
+.info-card-header {
+  display: grid;
+  gap: 4px;
+}
+
+.info-card-header .eyebrow {
+  margin-bottom: 2px;
+}
+
+.info-card-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-family: "Manrope", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.guide-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.guide-step-num {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #123247;
+  background: var(--primary);
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.question-meta-list {
+  display: grid;
+  gap: 10px;
+}
+
+.question-meta-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.question-meta-item span {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.question-meta-item strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.info-card-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+@media (max-width: 760px) {
+  .hero-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero-info-grid {
+  margin-top: 4px;
+}
+
 /* Illustration stage */

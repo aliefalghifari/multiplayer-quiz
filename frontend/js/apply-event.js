@@ -2,12 +2,39 @@ import { ui } from "./state.js";
 import { setMessage } from "./status-view.js";
 import { numberRecord, stringRecord } from "./records.js";
 import { readQuestion } from "./read-question.js";
+import { recordMatchHistory } from "./history-view.js";
+
+function recordQuestionEntry(quiz, next) {
+  const existingIndex = quiz.questionLog.findIndex(
+    (item) => item.questionIndex === next.questionIndex,
+  );
+  const entry = {
+    questionIndex: next.questionIndex,
+    question: next.question,
+    options: next.options,
+    selectedAnswer: null,
+    isCorrect: null,
+    correctAnswer: next.correctAnswer,
+  };
+  if (existingIndex >= 0) {
+    quiz.questionLog[existingIndex] = {
+      ...quiz.questionLog[existingIndex],
+      question: next.question,
+      options: next.options,
+      correctAnswer: next.correctAnswer ?? quiz.questionLog[existingIndex].correctAnswer,
+    };
+  } else {
+    quiz.questionLog.push(entry);
+  }
+}
 
 export function applyEvent(eventType, parsed, message) {
   const quiz = ui.quiz;
   if (eventType === "matched" || eventType === "match_found") {
     quiz.stage = "starting";
     quiz.completed = false;
+    quiz.historySaved = false;
+    quiz.questionLog = [];
     quiz.startedAt = Date.now();
     quiz.endedAt = null;
     if (typeof parsed.player_id === "string") quiz.playerId = parsed.player_id;
@@ -27,10 +54,23 @@ export function applyEvent(eventType, parsed, message) {
     }
     if (quiz.startedAt === null) quiz.startedAt = Date.now();
     Object.assign(quiz, next);
+    recordQuestionEntry(quiz, next);
     return;
   }
   if (eventType === "answer_result" && typeof parsed.is_correct === "boolean") {
     quiz.answerCorrect = parsed.is_correct;
+    if (typeof parsed.correct_answer === "number") {
+      quiz.correctAnswer = parsed.correct_answer;
+    }
+    const item = quiz.questionLog.find(
+      (entry) => entry.questionIndex === quiz.questionIndex,
+    );
+    if (item) {
+      item.isCorrect = parsed.is_correct;
+      if (typeof parsed.correct_answer === "number") {
+        item.correctAnswer = parsed.correct_answer;
+      }
+    }
     return;
   }
   if (eventType === "score_update") {
@@ -46,6 +86,7 @@ export function applyEvent(eventType, parsed, message) {
       typeof parsed.winner_text === "string" ? parsed.winner_text : message.message;
     quiz.scores = numberRecord(parsed.scores);
     quiz.players = stringRecord(parsed.players);
+    recordMatchHistory(quiz);
     return;
   }
   if (eventType === "player_disconnected" || eventType === "opponent_left") {
@@ -53,6 +94,7 @@ export function applyEvent(eventType, parsed, message) {
     quiz.completed = false;
     quiz.endedAt = Date.now();
     quiz.winnerText = message.message;
+    recordMatchHistory(quiz);
     return;
   }
   if (eventType === "error" && quiz.stage === "question") {

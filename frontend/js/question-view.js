@@ -30,6 +30,18 @@ export function questionMarkup(quiz) {
       <h1 class="quiz-question">${escapeHtml(quiz.question)}</h1>
       <div class="quiz-options" role="group" aria-label="Pilihan jawaban">${options}</div>
       ${quiz.answerCorrect === null ? "" : `<p class="quiz-answer-feedback ${quiz.answerCorrect ? "is-correct" : "is-wrong"}" aria-live="polite">${quiz.answerCorrect ? "Jawaban benar." : "Jawaban kurang tepat."}</p>`}
+      ${
+        quiz.selectedAnswer !== null
+          ? `<div class="quiz-next-loading" aria-live="polite">
+              <span>${
+                quiz.totalQuestions > 0 && quiz.questionIndex + 1 >= quiz.totalQuestions
+                  ? "Menunggu hasil akhir..."
+                  : "Menunggu soal berikutnya..."
+              }</span>
+              <div class="skeleton-shimmer quiz-next-shimmer-bar" aria-hidden="true"></div>
+            </div>`
+          : ""
+      }
     </section>
   </div>`;
 }

@@ -82,8 +82,8 @@
   text-align: center;
 }
 
-.quiz-result-row {
-  border-top: 1px solid var(--border);
+.quiz-result-row > * {
+  box-shadow: inset 0 1px 0 var(--border);
 }
 
 .quiz-result-value {
@@ -100,6 +100,75 @@
 .quiz-result-status {
   color: var(--primary);
   font-weight: 800;
+}
+
+.is-winner {
+  --result-bg: #1f463a;
+  --result-border: #66d6a8;
+  --result-divider: rgba(102, 214, 168, 0.35);
+  --result-text: #c6f5df;
+  --result-avatar-text: #113426;
+}
+
+.is-loser {
+  --result-bg: #4e2d38;
+  --result-border: #ee8292;
+  --result-divider: rgba(238, 130, 146, 0.35);
+  --result-text: #ffd7dc;
+  --result-avatar-text: #431722;
+}
+
+.quiz-result-player:is(.is-winner, .is-loser),
+.quiz-result-row > .quiz-result-value:is(.is-winner, .is-loser) {
+  background: var(--result-bg);
+}
+
+.quiz-result-player:is(.is-winner, .is-loser) {
+  box-shadow:
+    inset 2px 0 0 var(--result-border),
+    inset -2px 0 0 var(--result-border),
+    inset 0 2px 0 var(--result-border);
+}
+
+.quiz-result-player-you:is(.is-winner, .is-loser) {
+  border-top-left-radius: 13px;
+}
+
+.quiz-result-player-opponent:is(.is-winner, .is-loser) {
+  border-top-right-radius: 13px;
+}
+
+.quiz-result-row > .quiz-result-value:is(.is-winner, .is-loser) {
+  box-shadow:
+    inset 2px 0 0 var(--result-border),
+    inset -2px 0 0 var(--result-border),
+    inset 0 1px 0 var(--result-divider);
+}
+
+.quiz-result-row:last-child > .quiz-result-value:is(.is-winner, .is-loser) {
+  box-shadow:
+    inset 2px 0 0 var(--result-border),
+    inset -2px 0 0 var(--result-border),
+    inset 0 1px 0 var(--result-divider),
+    inset 0 -2px 0 var(--result-border);
+}
+
+.quiz-result-row:last-child > .quiz-result-value:first-child:is(.is-winner, .is-loser) {
+  border-bottom-left-radius: 13px;
+}
+
+.quiz-result-row:last-child > .quiz-result-value:last-child:is(.is-winner, .is-loser) {
+  border-bottom-right-radius: 13px;
+}
+
+.quiz-result-player:is(.is-winner, .is-loser) .quiz-result-avatar {
+  color: var(--result-avatar-text);
+  background: var(--result-border);
+  border-color: var(--result-text);
+}
+
+.quiz-result-status:is(.is-winner, .is-loser) {
+  color: var(--result-text);
 }
 
 .quiz-replay-button {

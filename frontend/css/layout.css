@@ -3,14 +3,19 @@
   gap: 24px;
   width: min(100% - 48px, 1100px);
   margin: 0 auto;
-  padding: 44px 0;
+  padding: 96px 0 44px;
+}
+
+.tab-view {
+  display: grid;
+  gap: 24px;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 38px;
+  margin-bottom: 8px;
 }
 
 .eyebrow {

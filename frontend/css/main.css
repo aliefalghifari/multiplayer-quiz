@@ -1,10 +1,12 @@
 @import url("base.css");
 @import url("layout.css");
+@import url("navbar.css");
 @import url("players.css");
 @import url("player-form.css");
 @import url("status.css");
 @import url("activity.css");
 @import url("activity-tags.css");
+@import url("history.css");
 @import url("lobby-responsive.css");
 @import url("hero.css");
 @import url("hero-stage.css");
@@ -14,3 +16,4 @@
 @import url("quiz.css");
 @import url("quiz-state.css");
 @import url("quiz-result.css");
+@import url("animations.css");

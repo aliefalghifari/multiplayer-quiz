@@ -28,5 +28,6 @@ export function readQuestion(parsed, quiz) {
     options,
     selectedAnswer: null,
     answerCorrect: null,
+    correctAnswer: typeof parsed.correct_answer === "number" ? parsed.correct_answer : null,
   };
 }

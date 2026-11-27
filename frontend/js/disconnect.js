@@ -1,5 +1,6 @@
 import { ui, refs, initialQuiz } from "./state.js";
 import { addLog } from "./log-view.js";
+import { clearNavNotice } from "./nav-view.js";
 import { render } from "./render.js";
 
 export function disconnectPlayer(playerId) {
@@ -16,6 +17,7 @@ export function disconnectPlayer(playerId) {
   ui.canFindAgain = false;
   ui.connected[playerId] = false;
   ui.quiz = initialQuiz();
+  clearNavNotice();
   addLog(ui.names[playerId], "Disconnect requested.", "info");
   render();
 }
@@ -27,5 +29,6 @@ export function returnToLobby() {
   }
   ui.quiz = initialQuiz();
   ui.canFindAgain = false;
+  clearNavNotice();
   render();
 }

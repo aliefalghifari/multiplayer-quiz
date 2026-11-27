@@ -1,7 +1,7 @@
 @media (max-width: 700px) {
   .app-container {
     width: min(100% - 30px, 520px);
-    padding: 28px 0;
+    padding: 100px 0 32px;
   }
 
   .players-grid {
@@ -13,10 +13,21 @@
   }
 }
 
+@media (max-width: 600px) {
+  .app-container {
+    padding-top: 130px;
+  }
+
+  /* navbar wraps to 2 rows (~118px tall) — give 14px headroom */
+  .quiz-screen {
+    padding: 134px 12px 32px;
+  }
+}
+
 @media (max-width: 420px) {
   .app-container {
     width: calc(100% - 24px);
-    padding-top: 24px;
+    padding-top: 130px;
   }
 
   .activity-row {

@@ -31,7 +31,7 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--text);
-  background: var(--page-surface);
+  background: var(--page-surface);   
 }
 
 button,

@@ -35,6 +35,7 @@ def judge_answer(manager, player_id, room_id, question_index, answer_index):
         "should_advance": should_advance,
         "scores": dict(room.scores),
         "players": names,
+        "correct_answer": room.questions[question_index]["answer"],
     }
 
 

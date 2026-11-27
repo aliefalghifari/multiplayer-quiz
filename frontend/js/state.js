@@ -1,3 +1,5 @@
+import { loadStoredHistory } from "./history-storage.js";
+
 export function initialQuiz() {
   return {
     stage: "lobby",
@@ -16,10 +18,14 @@ export function initialQuiz() {
     endedAt: null,
     scores: {},
     players: {},
+    questionLog: [],
+    historySaved: false,
   };
 }
 
 export const ui = {
+  activeTab: "hero",
+  navNotice: "",
   names: { 1: "" },
   connected: { 1: false },
   canFindAgain: false,
@@ -30,6 +36,8 @@ export const ui = {
     message: "Connect a player to start.",
   },
   logs: [],
+  history: loadStoredHistory(),
+  expandedHistoryIds: [],
 };
 
 export const refs = {

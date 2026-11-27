@@ -1,9 +1,10 @@
 import { escapeHtml } from "./escape.js";
 import { formatElapsed } from "./game-hud.js";
 
-function playerMarkup(name, side) {
+function playerMarkup(name, side, outcomeClass = "") {
   const initial = name.trim().charAt(0).toUpperCase() || "?";
-  return `<div class="quiz-result-player quiz-result-player-${side}" role="columnheader">
+  const stateClass = outcomeClass ? ` ${outcomeClass}` : "";
+  return `<div class="quiz-result-player quiz-result-player-${side}${stateClass}" role="columnheader">
     <span class="quiz-result-avatar" aria-hidden="true">${escapeHtml(initial)}</span>
     <strong>${escapeHtml(name)}</strong>
   </div>`;
@@ -30,6 +31,12 @@ export function resultMarkup(quiz, canFindAgain) {
   const ownWon = hasBothScores && ownScore > opponentScore;
   const opponentWon = hasBothScores && opponentScore > ownScore;
   const canCompareScores = quiz.completed && hasBothScores;
+  const ownOutcome =
+    canCompareScores && !isTie ? (ownWon ? "is-winner" : "is-loser") : "";
+  const opponentOutcome =
+    canCompareScores && !isTie ? (opponentWon ? "is-winner" : "is-loser") : "";
+  const ownOutcomeClass = ownOutcome ? ` ${ownOutcome}` : "";
+  const opponentOutcomeClass = opponentOutcome ? ` ${opponentOutcome}` : "";
   const title =
     quiz.completed && hasBothScores
       ? isTie
@@ -65,24 +72,24 @@ export function resultMarkup(quiz, canFindAgain) {
     <h1>${escapeHtml(title)}</h1>
     <div class="quiz-result-board" role="table" aria-label="Ringkasan pertandingan">
       <div class="quiz-result-columns" role="row">
-        ${playerMarkup(ownName, "you")}
+        ${playerMarkup(ownName, "you", ownOutcome)}
         <span class="quiz-result-column-label" role="columnheader">HASIL</span>
-        ${playerMarkup(opponentName, "opponent")}
+        ${playerMarkup(opponentName, "opponent", opponentOutcome)}
       </div>
       <div class="quiz-result-row" role="row">
-        <strong class="quiz-result-value" role="cell">${scoreValue(ownScore)}</strong>
+        <strong class="quiz-result-value${ownOutcomeClass}" role="cell">${scoreValue(ownScore)}</strong>
         <span class="quiz-result-label" role="rowheader">Skor</span>
-        <strong class="quiz-result-value" role="cell">${scoreValue(opponentScore)}</strong>
+        <strong class="quiz-result-value${opponentOutcomeClass}" role="cell">${scoreValue(opponentScore)}</strong>
       </div>
       <div class="quiz-result-row" role="row">
-        <strong class="quiz-result-value" role="cell">${duration}</strong>
+        <strong class="quiz-result-value${ownOutcomeClass}" role="cell">${duration}</strong>
         <span class="quiz-result-label" role="rowheader">Durasi</span>
-        <strong class="quiz-result-value" role="cell">${duration}</strong>
+        <strong class="quiz-result-value${opponentOutcomeClass}" role="cell">${duration}</strong>
       </div>
       <div class="quiz-result-row" role="row">
-        <strong class="quiz-result-value quiz-result-status" role="cell">${ownStatus}</strong>
+        <strong class="quiz-result-value quiz-result-status${ownOutcomeClass}" role="cell">${ownStatus}</strong>
         <span class="quiz-result-label" role="rowheader">Status</span>
-        <strong class="quiz-result-value quiz-result-status" role="cell">${opponentStatus}</strong>
+        <strong class="quiz-result-value quiz-result-status${opponentOutcomeClass}" role="cell">${opponentStatus}</strong>
       </div>
     </div>
   </section>

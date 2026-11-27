@@ -1,0 +1,257 @@
+.history-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.history-period {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.history-list {
+  display: grid;
+  gap: 14px;
+}
+
+.history-card {
+  overflow: hidden;
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.history-card:hover {
+  transform: translateY(-3px);
+  border-color: #9bb0c6;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28);
+}
+
+.history-card-main {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.history-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.history-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  color: #123247;
+  background: var(--primary);
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.history-date {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.history-matchup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.history-vs {
+  color: var(--text-muted);
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.history-avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  place-items: center;
+  color: #123247;
+  background: #7dd3fc;
+  border: 2px solid #b7eaff;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.history-opponent-info {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.history-opponent-info strong {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.history-opponent-info span {
+  color: var(--text-muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.history-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-outcome-badge {
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.history-outcome-badge.outcome-win {
+  color: #c6f5df;
+  background: #204638;
+  border-color: #66d6a8;
+}
+
+.history-outcome-badge.outcome-lose {
+  color: #ffd7dc;
+  background: #4e2d38;
+  border-color: #ee8292;
+}
+
+.history-outcome-badge.outcome-draw {
+  color: #d4efff;
+  background: #25415a;
+  border-color: #7dc7f2;
+}
+
+.history-outcome-badge.outcome-aborted {
+  color: #ffe2a8;
+  background: #4b3b22;
+  border-color: #f2c56f;
+}
+
+.history-score-summary {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.history-score-points {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.history-score-points.is-win {
+  color: #66d6a8;
+}
+
+.history-score-points.is-lose {
+  color: #ee8292;
+}
+
+.history-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(38, 54, 75, 0.35);
+  border-top: 1px solid #596e85;
+}
+
+.history-review-button {
+  padding: 4px 0;
+  color: var(--primary);
+  background: transparent;
+  border: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.history-review-button:hover:not(:disabled) {
+  color: #7dd3fc;
+}
+
+.history-review-panel {
+  display: grid;
+  gap: 10px;
+  padding: 16px 20px;
+  background: var(--page-surface);
+  border-top: 1px solid #596e85;
+}
+
+.history-review-item {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.history-review-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.history-review-item-head span {
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.history-review-item strong {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.history-review-answer {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.history-empty-action {
+  margin-top: 16px;
+}
+
+@media (max-width: 480px) {
+  .history-card-main,
+  .history-card-footer,
+  .history-review-panel {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}

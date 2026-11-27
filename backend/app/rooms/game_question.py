@@ -28,6 +28,7 @@ async def send_question(manager, room_id, question_index):
         total_questions=len(room.questions),
         question=question["question"],
         options=question["options"],
+        correct_answer=question["answer"],
     )
 
 
@@ -44,6 +45,7 @@ async def send_question_to_player(manager, player_id, room, event):
         total_questions=len(room.questions),
         question=question["question"],
         options=question["options"],
+        correct_answer=question["answer"],
     )
 
 

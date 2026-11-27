@@ -1,21 +1,85 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Multiplayer Quiz</title>
-    <link rel="stylesheet" href="css/main.css" />
-  </head>
-  <body>
-    <main id="lobby" class="app-container">
-      <div id="slot-hero"></div>
-      <div id="slot-players"></div>
-      <div id="slot-status"></div>
-      <div id="slot-log"></div>
-    </main>
-    <main id="quiz-screen" class="quiz-screen" hidden>
-      <div id="quiz-root"></div>
-    </main>
-    <script type="module" src="js/main.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multiplayer Quiz</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+
+<body>
+  <nav class="top-navbar">
+    <div class="top-navbar-inner">
+      <div class="navbar-brand">
+        <span class="navbar-brand-mark">VC</span>
+        <span>VeriClash</span>
+      </div>
+      <div class="navbar-links">
+        <button class="nav-tab is-active" type="button" data-nav="hero">Beranda</button>
+        <button class="nav-tab" type="button" data-nav="connect">Koneksi</button>
+        <button class="nav-tab" type="button" data-nav="history">Riwayat</button>
+      </div>
+    </div>
+  </nav>
+  <div id="nav-notice" class="nav-notice" hidden></div>
+
+  <main id="lobby" class="app-container">
+    <section class="tab-view" data-view="hero">
+      <div id="slot-hero">
+        <section class="skeleton-card skeleton-stack" aria-label="Memuat hero">
+          <span class="skeleton-shimmer skeleton-line skeleton-line-sm" style="width: 120px"></span>
+          <span class="skeleton-shimmer skeleton-line skeleton-line-lg" style="width: 55%"></span>
+          <span class="skeleton-shimmer skeleton-line" style="width: 72%"></span>
+          <div class="skeleton-row">
+            <span class="skeleton-shimmer skeleton-pill"></span>
+            <span class="skeleton-shimmer skeleton-pill"></span>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="tab-view" data-view="connect" hidden>
+      <div id="slot-players">
+        <section class="skeleton-card skeleton-stack" style="max-width: 560px" aria-label="Memuat panel pemain">
+          <span class="skeleton-shimmer skeleton-line" style="width: 36%"></span>
+          <span class="skeleton-shimmer skeleton-line skeleton-line-lg" style="width: 100%; height: 42px"></span>
+          <div class="skeleton-row">
+            <span class="skeleton-shimmer skeleton-button"></span>
+            <span class="skeleton-shimmer skeleton-button"></span>
+          </div>
+        </section>
+      </div>
+      <div id="slot-status">
+        <section class="skeleton-card skeleton-stack" aria-label="Memuat status server">
+          <span class="skeleton-shimmer skeleton-line" style="width: 28%"></span>
+          <span class="skeleton-shimmer skeleton-line skeleton-line-lg" style="width: 100%; height: 46px"></span>
+        </section>
+      </div>
+      <div id="slot-log">
+        <section class="skeleton-card skeleton-stack" aria-label="Memuat log aktivitas">
+          <span class="skeleton-shimmer skeleton-line" style="width: 32%"></span>
+          <span class="skeleton-shimmer skeleton-line" style="width: 85%"></span>
+          <span class="skeleton-shimmer skeleton-line" style="width: 68%"></span>
+        </section>
+      </div>
+    </section>
+
+    <section class="tab-view" data-view="history" hidden>
+      <div id="slot-history">
+        <section class="skeleton-card skeleton-stack" aria-label="Memuat riwayat">
+          <span class="skeleton-shimmer skeleton-line" style="width: 24%"></span>
+          <span class="skeleton-shimmer skeleton-line" style="width: 90%"></span>
+          <span class="skeleton-shimmer skeleton-line" style="width: 75%"></span>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <main id="quiz-screen" class="quiz-screen" hidden>
+    <div id="quiz-root"></div>
+  </main>
+  <script type="module" src="js/main.js"></script>
+</body>
+
 </html>

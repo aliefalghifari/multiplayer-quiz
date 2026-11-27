@@ -26,6 +26,12 @@ export function submitAnswer(answerIndex) {
     return;
   }
   quiz.selectedAnswer = answerIndex;
+  const entry = quiz.questionLog.find(
+    (item) => item.questionIndex === quiz.questionIndex,
+  );
+  if (entry) {
+    entry.selectedAnswer = answerIndex;
+  }
   render();
 }
 

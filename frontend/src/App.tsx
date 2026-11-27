@@ -622,7 +622,7 @@ function App() {
       <header className="page-header">
         <div>
           <span className="eyebrow">MULTIPLAYER QUIZ</span>
-          <h1>Kuwizz</h1>
+          <h1>VeriClash</h1>
           <p>
             Beat your friends in your field.
           </p>

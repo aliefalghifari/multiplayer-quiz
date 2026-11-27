@@ -2,6 +2,8 @@ import { ui } from "./state.js";
 import { connectPlayer } from "./connect.js";
 import { disconnectPlayer, returnToLobby } from "./disconnect.js";
 import { submitAnswer, findMatchAgain } from "./actions.js";
+import { navigateTo } from "./nav-view.js";
+import { clearHistory, toggleHistoryReview } from "./history-view.js";
 import { syncLobby } from "./lobby-view.js";
 import { render } from "./render.js";
 
@@ -9,6 +11,26 @@ export function bindPage() {
   document.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
+    const navBtn = target.closest("[data-nav]");
+    if (navBtn instanceof HTMLElement) {
+      navigateTo(navBtn.dataset.nav);
+      return;
+    }
+    if (target.closest("[data-go-connect]")) {
+      navigateTo("connect", { focusName: true });
+      return;
+    }
+    const reviewBtn = target.closest("[data-toggle-review]");
+    if (reviewBtn instanceof HTMLElement) {
+      toggleHistoryReview(reviewBtn.dataset.toggleReview);
+      render();
+      return;
+    }
+    if (target.closest("[data-clear-history]")) {
+      clearHistory();
+      render();
+      return;
+    }
     const disconnect = target.closest("[data-disconnect]");
     if (disconnect) {
       disconnectPlayer(Number(disconnect.dataset.disconnect));

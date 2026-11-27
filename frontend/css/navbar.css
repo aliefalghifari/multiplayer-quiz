@@ -1,0 +1,129 @@
+.top-navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 30;
+  background: #202e41;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+}
+
+.top-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(100% - 48px, 1100px);
+  min-height: 64px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.navbar-brand-mark {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: #123247;
+  background: var(--primary);
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.navbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-tab {
+  min-height: 38px;
+  padding: 8px 14px;
+  color: var(--text-muted);
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nav-tab:hover:not(.is-locked):not(.is-active) {
+  color: var(--text);
+  border-color: #9bb0c6;
+}
+
+.nav-tab.is-active {
+  color: #123247;
+  background: var(--primary);
+  border-color: #7dd3fc;
+}
+
+.nav-tab.is-locked {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.nav-tab.is-locked:hover {
+  transform: none;
+}
+
+.nav-tab.is-locked::after {
+  display: none;
+}
+
+.nav-notice {
+  position: fixed;
+  top: 88px;
+  left: 50%;
+  z-index: 35;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 11px 16px;
+  color: #ffe2a8;
+  background: #4b3b22;
+  border: 1px solid #ffe2aa;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.45);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 600px) {
+  .top-navbar-inner {
+    width: calc(100% - 24px);
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .navbar-links {
+    width: 100%;
+  }
+
+  .nav-tab {
+    flex: 1 1 0;
+    padding: 8px 10px;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .nav-notice {
+    top: 136px;
+  }
+}

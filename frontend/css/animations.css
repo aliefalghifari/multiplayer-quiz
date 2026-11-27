@@ -1,0 +1,380 @@
+/* Button animations, card hovers, and skeleton shimmer loading states */
+
+/* =========================================================
+   1. Button Animations (applied across all buttons)
+   ========================================================= */
+
+button {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    filter 0.22s ease;
+}
+
+button::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 80%
+  );
+  transform: translateX(-130%) skewX(-18deg);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+button:hover:not(:disabled)::after {
+  transform: translateX(130%) skewX(-18deg);
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px) scale(0.985);
+  transition-duration: 0.08s;
+}
+
+.quiz-option {
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.quiz-option:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.quiz-option-letter {
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.quiz-option:hover:not(:disabled) .quiz-option-letter {
+  color: #ffffff;
+  background: var(--primary);
+  transform: scale(1.08);
+}
+
+.quiz-option.is-correct {
+  animation: option-pop 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.quiz-option.is-wrong {
+  animation: option-shake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* =========================================================
+   2. Card Hover Animations
+   ========================================================= */
+
+.quiz-hero,
+.player-panel,
+.status-container,
+.activity-card,
+.quiz-panel,
+.game-hud-player,
+.game-hud-time,
+.quiz-result-action,
+.quiz-result-board {
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.quiz-hero:hover,
+.player-panel:hover,
+.status-container:hover,
+.activity-card:hover,
+.quiz-result-action:hover {
+  transform: translateY(-3px);
+  border-color: #9bb0c6;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.28);
+}
+
+.quiz-panel:hover,
+.quiz-result-board:hover {
+  border-color: #9bb0c6;
+  box-shadow: 0 20px 55px rgba(15, 23, 42, 0.45);
+}
+
+.game-hud-player:hover,
+.game-hud-time:hover {
+  transform: translateY(-2px);
+  border-color: #9bb0c6;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.28);
+}
+
+.activity-row {
+  transition: background-color 0.2s ease;
+}
+
+.activity-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.quiz-card-front,
+.quiz-card-back,
+.quiz-score-card,
+.quiz-decor {
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.quiz-hero:hover .quiz-card-front {
+  transform: rotate(-1.5deg) translateY(-5px);
+}
+
+.quiz-hero:hover .quiz-card-back {
+  transform: rotate(12deg) translate(5px, -3px);
+}
+
+.quiz-hero:hover .quiz-score-card {
+  transform: rotate(0.5deg) translateY(-5px);
+}
+
+.quiz-hero:hover .decor-one {
+  transform: rotate(20deg) translateY(-3px);
+}
+
+.quiz-hero:hover .decor-two {
+  transform: rotate(4deg) translateY(-3px);
+}
+
+/* =========================================================
+   3. Skeleton Shimmer Loading States
+   ========================================================= */
+
+.skeleton-shimmer,
+.quiz-card-lines span,
+.quiz-card-skeleton span {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    105deg,
+    #46576c 20%,
+    #5b7089 48%,
+    #7088a3 55%,
+    #46576c 80%
+  );
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 1.45s ease-in-out infinite;
+}
+
+.skeleton-line {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.skeleton-line-sm {
+  height: 9px;
+}
+
+.skeleton-line-lg {
+  height: 22px;
+  border-radius: 10px;
+}
+
+.skeleton-pill {
+  display: inline-block;
+  width: 96px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+.skeleton-button {
+  display: block;
+  width: 112px;
+  height: 44px;
+  border-radius: 9px;
+}
+
+.skeleton-card {
+  padding: 24px;
+  background: var(--panel-surface);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+}
+
+.skeleton-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.skeleton-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Waiting state shimmer inside Server Status */
+.status-message.status-waiting {
+  align-items: center;
+}
+
+.status-body {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+}
+
+.status-body p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.status-message.status-waiting .skeleton-shimmer {
+  background: linear-gradient(
+    105deg,
+    rgba(255, 226, 168, 0.16) 20%,
+    rgba(255, 226, 168, 0.45) 50%,
+    rgba(255, 226, 168, 0.16) 80%
+  );
+  background-size: 220% 100%;
+}
+
+.status-shimmer-track {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-shimmer-track .skeleton-line:first-child {
+  width: min(160px, 55%);
+}
+
+.status-shimmer-track .skeleton-line:last-child {
+  width: min(90px, 30%);
+}
+
+/* Starting quiz screen skeleton shimmer */
+.quiz-skeleton-card {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  text-align: left;
+}
+
+.quiz-skeleton-progress {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.quiz-skeleton-question {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  margin: 6px 0 8px;
+}
+
+.quiz-skeleton-question span:first-child {
+  width: 82%;
+  height: 20px;
+  border-radius: 8px;
+}
+
+.quiz-skeleton-question span:last-child {
+  width: 56%;
+  height: 20px;
+  border-radius: 8px;
+}
+
+.quiz-skeleton-options {
+  display: grid;
+  gap: 10px;
+}
+
+.quiz-skeleton-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 54px;
+  padding: 10px 14px;
+  background: var(--page-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.quiz-skeleton-badge {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9px;
+}
+
+.quiz-skeleton-text {
+  height: 13px;
+  border-radius: 999px;
+}
+
+/* Next-question transition shimmer after answering */
+.quiz-next-loading {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.quiz-next-loading span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.quiz-next-shimmer-bar {
+  width: min(220px, 70%);
+  height: 6px;
+  border-radius: 999px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes option-pop {
+  0% {
+    transform: scale(0.98);
+  }
+  55% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes option-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  65% {
+    transform: translateX(4px);
+  }
+}
