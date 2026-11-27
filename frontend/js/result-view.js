@@ -27,48 +27,55 @@ export function resultMarkup(quiz, canFindAgain) {
   const hasBothScores = Boolean(ownEntry && opponentEntry);
   const ownScore = ownEntry ? ownEntry[1] : null;
   const opponentScore = opponentEntry ? opponentEntry[1] : null;
-  const isTie = hasBothScores && ownScore === opponentScore;
-  const ownWon = hasBothScores && ownScore > opponentScore;
-  const opponentWon = hasBothScores && opponentScore > ownScore;
+
+  const durations = quiz.durations || {};
+  const ownDurSecs = ownEntry ? durations[ownEntry[0]] : 999999;
+  const oppDurSecs = opponentEntry ? durations[opponentEntry[0]] : 999999;
+
+  let ownWon = false;
+  let opponentWon = false;
+
+  if (hasBothScores && ownScore !== null && opponentScore !== null) {
+    if (ownScore > opponentScore) {
+      ownWon = true;
+    } else if (opponentScore > ownScore) {
+      opponentWon = true;
+    } else {
+      if (ownDurSecs <= oppDurSecs) {
+        ownWon = true;
+      } else {
+        opponentWon = true;
+      }
+    }
+  }
+
+  const isTie = false;
   const canCompareScores = quiz.completed && hasBothScores;
-  const ownOutcome =
-    canCompareScores && !isTie ? (ownWon ? "is-winner" : "is-loser") : "";
-  const opponentOutcome =
-    canCompareScores && !isTie ? (opponentWon ? "is-winner" : "is-loser") : "";
+  const ownOutcome = canCompareScores ? (ownWon ? "is-winner" : "is-loser") : "";
+  const opponentOutcome = canCompareScores ? (opponentWon ? "is-winner" : "is-loser") : "";
   const ownOutcomeClass = ownOutcome ? ` ${ownOutcome}` : "";
   const opponentOutcomeClass = opponentOutcome ? ` ${opponentOutcome}` : "";
   const title =
     quiz.completed && hasBothScores
-      ? isTie
-        ? "Hasil seri!"
-        : ownWon
-          ? "Kamu menang!"
-          : "Kamu kalah!"
+      ? quiz.winnerText || (ownWon ? "Kamu menang!" : "Kamu kalah!")
       : quiz.winnerText || "Game selesai";
   const ownStatus = !quiz.completed
     ? "Terhenti"
     : !canCompareScores
       ? "Selesai"
-      : isTie
-        ? "Seri"
-        : ownWon
-          ? "Menang"
-          : "Kalah";
+      : ownWon
+        ? "Menang"
+        : "Kalah";
   const opponentStatus = !quiz.completed
     ? "Terhenti"
     : !canCompareScores
       ? "Selesai"
-      : isTie
-        ? "Seri"
-        : opponentWon
-          ? "Menang"
-          : "Kalah";
+      : opponentWon
+        ? "Menang"
+        : "Kalah";
   const scoreValue = (score) =>
     score === null ? "Belum tersedia" : `${escapeHtml(score)} poin`;
   const duration = formatElapsed(quiz.startedAt, quiz.endedAt ?? Date.now());
-  const durations = quiz.durations || {};
-  const ownDurSecs = ownEntry ? durations[ownEntry[0]] : null;
-  const oppDurSecs = opponentEntry ? durations[opponentEntry[0]] : null;
   const formatSecs = (secs) => {
     if (typeof secs !== "number") return duration;
     const m = Math.floor(secs / 60);

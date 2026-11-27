@@ -26,7 +26,9 @@ function updateElapsed() {
   const timer = document.getElementById("game-elapsed");
   if (timer && ui.quiz.startedAt !== null && ui.quiz.endedAt === null) {
     const text = formatCountdown(ui.quiz.startedAt);
-    timer.textContent = text;
+    if (timer.textContent !== text) {
+      timer.textContent = text;
+    }
     if (text === "00:00" && ui.quiz.stage === "question" && !ui.quiz.waitingForOpponent && !ui.quiz.completed) {
       ui.quiz.waitingForOpponent = true;
       render();
@@ -39,15 +41,26 @@ export function syncQuiz() {
   if (!root || ui.quiz.stage === "lobby") {
     stamp = "";
     if (root) root.innerHTML = "";
-    syncElapsedTimer();
+    if (timerInterval !== null) {
+      window.clearInterval(timerInterval);
+      timerInterval = null;
+    }
     return;
   }
-  const next = JSON.stringify(ui.quiz) + String(ui.canFindAgain);
+  const isRunning = ui.quiz.stage !== "lobby" && ui.quiz.startedAt !== null && ui.quiz.endedAt === null;
+  if (isRunning && timerInterval === null) {
+    timerInterval = window.setInterval(updateElapsed, 1000);
+  } else if (!isRunning && timerInterval !== null) {
+    window.clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  const next = String(ui.quiz.stage) + String(ui.quiz.questionIndex) + String(ui.quiz.selectedAnswer) + String(ui.quiz.answerSubmitted) + String(ui.quiz.waitingForOpponent) + String(ui.canFindAgain);
   if (next !== stamp) {
     stamp = next;
     if (ui.quiz.stage === "starting") root.innerHTML = startingMarkup(ui.quiz);
     else if (ui.quiz.stage === "question") root.innerHTML = questionMarkup(ui.quiz);
     else root.innerHTML = resultMarkup(ui.quiz, ui.canFindAgain);
   }
-  syncElapsedTimer();
+  updateElapsed();
 }
